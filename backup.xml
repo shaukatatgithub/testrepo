@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Mission Australia Backup" basedir="./" default="help">
+
+    <!-- Load the configuration file -->
+    <property file="/home/igorc/deployment_scripts/backup.properties" />
+
+    <!-- Backup -->
+    <target name="backup" description="performs the Backup">
+    <echo msg="Copying /var/www/html/* to backup directory ..." />
+
+	<exec command="/bin/cp -fR /var/www/html/* /tmp/backup" />
+
+	<exec command="/bin/cp -f /var/www/html/.htaccess /tmp/backup" />
+
+	<echo msg="Backup Joomla databases ..." />
+
+	<exec command="/usr/bin/mysqldump -u ${db1.user} -p${db1.pass} -h ${db.host} ${db1.name} &gt; /tmp/backup/dbbackup/joomla_`date +%y-%m-%d_%H-%M-%S`.sql" />
+
+	<echo msg="Compress Joomla databases ..." />
+	
+	<exec command="/usr/bin/gzip /tmp/backup/dbbackup/*.sql" />
+
+	<echo msg="Backup Cake databases ..." />
+
+	<exec command="/usr/bin/mysqldump -u ${db2.user} -p${db2.pass} -h ${db.host} ${db2.name} &gt; /tmp/backup/dbbackup/servicedirectory`date +%y-%m-%d_%H-%M-%S`.sql" />
+
+	<echo msg="Compress Cake databases ..." />
+	
+	<exec command="/usr/bin/gzip /tmp/backup/dbbackup/*.sql" />
+
+	<echo msg="Add files to git ..." />
+
+	<exec command="cd /tmp/backup" />
+
+	<exec command="/usr/bin/git add /tmp/backup/*" />
+
+	<echo msg="Commit git files ..." />
+	
+	<exec command="cd /tmp/backup" />
+	
+	<exec command="chmod -R missionaust.missionaust *" />
+
+	<exec command="/usr/bin/git commit -m mission_`date +%y-%m-%d_%H-%M-%S`" />
+
+	<echo msg="Push to git repo ..." />
+
+	<exec command="/root/bin/git_push" />
+
+     </target>
+
+
+    <!-- Display the available options -->
+    <target name="help" description="Displays the available options">
+        <echo msg="Build options" />
+        <echo msg="------------------" />
+	<echo msg="$ phing help - Displays the available options" />
+        <echo msg="$ phing backup - Backs up the MA site" />
+
+    </target>
+
+</project>
+

@@ -1,0 +1,118 @@
+##
+# @package		Joomla
+# @copyright	Copyright (C) 2005 - 2012 Open Source Matters. All rights reserved.
+# @license		GNU General Public License version 2 or later; see LICENSE.txt
+##
+
+##
+# READ THIS COMPLETELY IF YOU CHOOSE TO USE THIS FILE!
+#
+# The line just below this section: 'Options +FollowSymLinks' may cause problems
+# with some server configurations.  It is required for use of mod_rewrite, but may already
+# be set by your server administrator in a way that dissallows changing it in
+# your .htaccess file.  If using it causes your server to error out, comment it out (add # to
+# beginning of line), reload your site in your browser and test your sef url's.  If they work,
+# it has been set by your server administrator and you do not need it set here.
+##
+
+## Can be commented out if causes errors, see notes above.
+Options +FollowSymLinks
+
+## Mod_rewrite in use.
+
+RewriteEngine On
+
+## Begin - Rewrite rules to block out some common exploits.
+# If you experience problems on your site block out the operations listed below
+# This attempts to block the most common type of exploit `attempts` to Joomla!
+#
+# Block out any script trying to base64_encode data within the URL.
+RewriteCond %{QUERY_STRING} base64_encode[^(]*\([^)]*\) [OR]
+# Block out any script that includes a <script> tag in URL.
+RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+# Block out any script trying to set a PHP GLOBALS variable via URL.
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+# Block out any script trying to modify a _REQUEST variable via URL.
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+# Return 403 Forbidden header and show the content of the root homepage
+RewriteRule .* index.php [F]
+#
+## End - Rewrite rules to block out some common exploits.
+
+## Begin - Custom redirects
+#
+# If you need to redirect some pages, or set a canonical non-www to
+# www redirect (or vice versa), place that code here. Ensure those
+# redirects use the correct RewriteRule syntax and the [R=301,L] flags.
+#
+## End - Custom redirects
+
+##
+# Uncomment following line if your webserver's URL
+# is not directly related to physical file paths.
+# Update Your Joomla! Directory (just / for root).
+##
+
+ RewriteBase /
+
+## Begin - Joomla! core SEF Section.
+#
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+#
+# If the requested path and file is not /index.php and the request
+# has not already been internally rewritten to the index.php script
+RewriteCond %{REQUEST_URI} !^/index\.php
+# and the request is for something within the component folder,
+# or for the site root, or for an extensionless URL, or the
+# requested URL ends with one of the listed extensions
+RewriteCond %{REQUEST_URI} /component/|(/[^.]*|\.(php|html?|feed|pdf|vcf|raw))$ [NC]
+# and the requested path and file doesn't directly match a physical file
+RewriteCond %{REQUEST_FILENAME} !-f
+# and the requested path and file doesn't directly match a physical folder
+RewriteCond %{REQUEST_FILENAME} !-d
+# internally rewrite the request to the index.php script
+RewriteRule .* index.php [L]
+#
+## End - Joomla! core SEF Section.
+
+
+
+
+# Make sure the requested URL isn't a file or directory
+# Why you'd create a directory called index.php, but best to be sure
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Use a reg-Ex to find URL's where index.php is followed by something.
+# If so, create a redirect to whatever followed the slash
+RewriteRule ^index.php/(.*)$ /$1 [R=301]
+
+
+ErrorDocument 404 /index.php
+Redirect 301 /index.php/WiMax-Interference-Solutions/View-all-products.html http://avcomm.com.au/avcomm-store/wimax-interference-solutions
+
+Redirect 301 /avcomm.comm.au https://www.avcomm.com.au
+Redirect 301 /index.php/Radio-Products/View-all-products.html  https://avcomm.com.au/avcomm-store/radios
+
+Redirect 301 /index.php/Shop-Online/vmchk.html   https://avcomm.com.au/avcomm-store
+Redirect 301 /index.php/contact-us.html   https://avcomm.com.au/AvComm-General/contact-us
+Redirect 301 /index.php/Satellite-Dishes/View-all-products.html   https://avcomm.com.au/avcomm-store/satellite-dishes
+Redirect 301 /index.php/Satellite-Receivers/View-all-products.html  https://avcomm.com.au/avcomm-store/satellite-dishes
+Redirect 301 /index.php/Tecsun-Radios/View-all-products.html  https://avcomm.com.au/avcomm-store/radios
+Redirect 301 /index.php/Block-Up-Converters-BUC/View-all-products.html  http://avcomm.com.au/avcomm-store/band-up-converters
+
+
+Redirect 301 /index.php/Degen-Radios/View-all-products.html https://avcomm.com.au/avcomm-store/radios
+Redirect 301 /index.php/vmchk/Radio-Products/View-all-products.html  https://avcomm.com.au/avcomm-store/radios
+Redirect 301 /index.php/RF-Test-Measurement-Equipment/View-all-products.html   https://avcomm.com.au/digiair-db-terrestrial-field-strength-meter-detail
+
+Redirect 301 /index.php/WiMax-Interference-Solutions/View-all-products.html http://avcomm.com.au/avcomm-store/wimax-interference-solutions
+Redirect 301 /index.php/Cable-Waveguide/View-all-products.html  https://avcomm.com.au/avcomm-store/cable-and-waveguide
+Redirect 301 /Satellite-Receivers-CAMs/Ericsson-RX8200-Satellite-Receiver/flypage-sparkstore.tpl.html  http://avcomm.com.au/avcomm-store/satellite-dishes
+Redirect 301  /index.php/Satellite-Dishes/2.4m-Satellite-Dish-Ex-Commercial-Acesat/flypage-sparkstore.tpl.html http://avcomm.com.au/avcomm-store/satellite-dishes
+Redirect 301  /index.php/RF-Accessories/View-all-products.html http://avcomm.com.au/avcomm-store/rf-accessories
+Redirect 301 /index.php/Low-Noise-Blocks-LNBs-Feedhorns/View-all-products.html  http://avcomm.com.au/avcomm-store/low-noise-blocks-feedhorns
+Redirect 301  /index.php/Feedhorns/View-all-products.html http://avcomm.com.au/avcomm-store/low-noise-blocks-feedhorns/feedhorns
+Redirect 301 /index.php/Radio-Products/View-all-products.html   http://avcomm.com.au/avcomm-store/radios
+Redirect 301 /index.php/RF-Test-Measurement-Equipment/DigiAir-Pro-Digital-Terrestrial-Field-Strength-Meter/flypage-sparkstore.tpl.html  http://avcomm.com.au/avcomm-store/rf-test-measurement-equipment/digiair-pro-digital-terrestrial-field-strength-meter-detail
+Redirect 301 /index.php/WiMax-Interference-Solutions/Av-Comm-3.625-4.2Ghz-Bandpass-Filtered-PLL-LNB/flypage-sparkstore.tpl.html   http://avcomm.com.au/avcomm-store/low-noise-blocks-feedhorns
